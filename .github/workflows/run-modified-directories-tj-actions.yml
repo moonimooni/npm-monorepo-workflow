@@ -40,30 +40,62 @@ jobs:
     needs: get_changed_directories
     runs-on: ubuntu-latest
     if: ${{ (needs.get_changed_directories.outputs.foo_changed == 'true') || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    defaults:
+      run:
+        working-directory: foo
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Run foo
-        run: cd foo && node index.js
+        run: node index.js
+
 
   run_bar:
     needs: get_changed_directories
     runs-on: ubuntu-latest
     if: ${{ needs.get_changed_directories.outputs.bar_changed == 'true' || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    defaults:
+      run:
+        working-directory: bar
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Run bar
-        run: cd bar && node index.js
+        run: |
+          ls -al
+          pwd
+          node index.js
 
   run_baz:
     needs: get_changed_directories
     runs-on: ubuntu-latest
     if: ${{ needs.get_changed_directories.outputs.baz_changed == 'true' || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    defaults:
+      run:
+        working-directory: baz
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Run baz
-        run: cd baz && node index.js
+        run: node index.js
 
   run_common:
     needs: get_changed_directories
     runs-on: ubuntu-latest
     if: ${{ needs.get_changed_directories.outputs.common_changed == 'true' }}
+    defaults:
+      run:
+        working-directory: common
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - name: Run common
-        run: cd common && node index.js
+        run: node index.js
