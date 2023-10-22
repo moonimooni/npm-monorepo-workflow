@@ -3,7 +3,6 @@
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
-SHA1=$3
 
 if [ "$COMMIT_SOURCE" = merge ]; then
   exit 0
@@ -12,7 +11,7 @@ fi
 MODIFIED_DIRECTORIES=$(git diff --name-only HEAD | cut -d/ -f1 | sort -u)
 MODIFIED_DIRECTORIES_COUNT=$(echo "$MODIFIED_DIRECTORIES" | wc -l)
 
-VALID_DIRECTORIES='bar|baz|common|foo'
+VALID_DIRECTORIES='foo|bar|common'
 
 if [ $MODIFIED_DIRECTORIES_COUNT -ge 2 ]; then
     echo "두 군데 이상의 디렉토리 변경 건으로 커밋 메세지 프리픽스 생성을 스킵합니다."
@@ -22,7 +21,6 @@ elif [[ ! $MODIFIED_DIRECTORIES =~ ^($VALID_DIRECTORIES)$ ]]; then
     exit 0
 fi
 
-MODIFIED_DIRECTORY=$(echo "$MODIFIED_DIRECTORIES" | head -n 1)
 ORIGINAL_COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
 if [[ ! $ORIGINAL_COMMIT_MSG =~ ^($MODIFIED_DIRECTORY:) ]]; then
