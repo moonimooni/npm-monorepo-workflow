@@ -1,0 +1,69 @@
+name: 'Run Modified Directories(tj-actions)'
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  get_changed_directories:
+    runs-on: ubuntu-latest
+    outputs:
+      foo_changed: ${{ steps.changed-directories.outputs.foo_any_changed }}
+      bar_changed: ${{ steps.changed-directories.outputs.bar_any_changed }}
+      baz_changed: ${{ steps.changed-directories.outputs.baz_any_changed }}
+      common_changed: ${{ steps.changed-directories.outputs.common_any_changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Get changed directories
+        id: changed-directories
+        uses: tj-actions/changed-files@v39
+        with:
+          dir_names: 'true'
+          files_yaml: |
+            foo:
+              - 'foo/**'
+              - '!foo/*.md'
+            bar:
+              - 'bar/**'
+              - '!bar/*.md'
+            baz:
+              - 'baz/**'
+              - '!baz/*.md'
+            common:
+              - 'common/**'
+              - '!common/*.md'
+
+  run_foo:
+    needs: get_changed_directories
+    runs-on: ubuntu-latest
+    if: ${{ (needs.get_changed_directories.outputs.foo_changed == 'true') || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    steps:
+      - name: Run foo
+        run: cd foo && node index.js
+
+  run_bar:
+    needs: get_changed_directories
+    runs-on: ubuntu-latest
+    if: ${{ needs.get_changed_directories.outputs.bar_changed == 'true' || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    steps:
+      - name: Run bar
+        run: cd bar && node index.js
+
+  run_baz:
+    needs: get_changed_directories
+    runs-on: ubuntu-latest
+    if: ${{ needs.get_changed_directories.outputs.baz_changed == 'true' || (needs.get_changed_directories.outputs.common_changed == 'true') }}
+    steps:
+      - name: Run baz
+        run: cd baz && node index.js
+
+  run_common:
+    needs: get_changed_directories
+    runs-on: ubuntu-latest
+    if: ${{ needs.get_changed_directories.outputs.common_changed == 'true' }}
+    steps:
+      - name: Run common
+        run: cd common && node index.js

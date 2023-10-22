@@ -1,1 +1,1 @@
-console.log('common');
+console.log('commonly used module');

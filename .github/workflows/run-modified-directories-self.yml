@@ -1,0 +1,46 @@
+name: 'Run Modified Directories(self)'
+
+on:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  generate_directory_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      directory: ${{ steps.directory-matrix.outputs.directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: Generate Matrix
+        id: directory-matrix
+        run: |
+          echo "::set-output name=directory::$(.github/workflows/run-modified-directories-self.sh)"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+
+  run_any:
+    needs: generate_directory_matrix
+    if: needs.generate_directory_matrix.outputs.directory != ''
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+        directory: ${{ fromJSON(needs.generate_directory_matrix.outputs.directory).dirs }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Run
+        run: node index.js
