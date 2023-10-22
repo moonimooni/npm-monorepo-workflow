@@ -1,1 +1,3 @@
-console.log('baz');
+const { common } = require('../common');
+
+console.log(common + 'baz');
