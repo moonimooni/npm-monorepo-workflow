@@ -11,7 +11,6 @@ jobs:
     outputs:
       foo_changed: ${{ steps.changed-directories.outputs.foo_any_changed }}
       bar_changed: ${{ steps.changed-directories.outputs.bar_any_changed }}
-      baz_changed: ${{ steps.changed-directories.outputs.baz_any_changed }}
       common_changed: ${{ steps.changed-directories.outputs.common_any_changed }}
     steps:
       - uses: actions/checkout@v4
@@ -29,9 +28,6 @@ jobs:
             bar:
               - 'bar/**'
               - '!bar/*.md'
-            baz:
-              - 'baz/**'
-              - '!baz/*.md'
             common:
               - 'common/**'
               - '!common/*.md'
@@ -51,7 +47,6 @@ jobs:
       - name: Run foo
         run: node index.js
 
-
   run_bar:
     needs: get_changed_directories
     runs-on: ubuntu-latest
@@ -69,21 +64,6 @@ jobs:
           ls -al
           pwd
           node index.js
-
-  run_baz:
-    needs: get_changed_directories
-    runs-on: ubuntu-latest
-    if: ${{ needs.get_changed_directories.outputs.baz_changed == 'true' || (needs.get_changed_directories.outputs.common_changed == 'true') }}
-    defaults:
-      run:
-        working-directory: baz
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-      - name: Run baz
-        run: node index.js
 
   run_common:
     needs: get_changed_directories
