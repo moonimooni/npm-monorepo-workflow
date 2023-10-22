@@ -3,11 +3,29 @@
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
-SHA1=$3 # only available if it's an amend/squash commit
+SHA1=$3
 
+if [ "$COMMIT_SOURCE" = merge ]; then
+  exit 0
+fi
+
+MODIFIED_DIRECTORIES=$(git diff --name-only HEAD | cut -d/ -f1 | sort -u)
+MODIFIED_DIRECTORIES_COUNT=$(echo "$MODIFIED_DIRECTORIES" | wc -l)
+
+VALID_DIRECTORIES='bar|baz|common|foo'
+
+if [ $MODIFIED_DIRECTORIES_COUNT -ge 2 ]; then
+    echo "두 군데 이상의 디렉토리 변경 건으로 커밋 메세지 프리픽스 생성을 스킵합니다."
+    exit 0
+elif [[ ! $MODIFIED_DIRECTORIES =~ ^($VALID_DIRECTORIES)$ ]]; then
+    echo "프로젝트 디렉토리 외 변경 건으로 커밋 메세지 프리픽스 생성을 스킵합니다."
+    exit 0
+fi
+
+MODIFIED_DIRECTORY=$(echo "$MODIFIED_DIRECTORIES" | head -n 1)
 ORIGINAL_COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
-echo "====prepare-commit-msg===="
-echo ORIGINAL_COMMIT_MSG: $ORIGINAL_COMMIT_MSG
-echo COMMIT_SOURCE: $COMMIT_SOURCE
-echo SHA1: $SHA1
 
+if [[ ! $ORIGINAL_COMMIT_MSG =~ ^($MODIFIED_DIRECTORY:) ]]; then
+    PREFIXED_COMMIT_MSG="$MODIFIED_DIRECTORY: $ORIGINAL_COMMIT_MSG"
+    echo "$PREFIXED_COMMIT_MSG" > "$COMMIT_MSG_FILE"
+fi

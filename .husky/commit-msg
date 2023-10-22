@@ -1,13 +1,13 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-COMMIT_MSG_FILE=$1
-COMMIT_SOURCE=$2
-SHA1=$3
+# COMMIT_MSG_FILE=$1
+# COMMIT_SOURCE=$2
+# SHA1=$3
 
-ORIGINAL_COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
-echo "====commit-msg===="
-echo ORIGINAL_COMMIT_MSG: $ORIGINAL_COMMIT_MSG
-echo COMMIT_SOURCE: $COMMIT_SOURCE
-echo SHA1: $SHA1
+# ORIGINAL_COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+# echo "====commit-msg===="
+# echo ORIGINAL_COMMIT_MSG: $ORIGINAL_COMMIT_MSG
+# echo COMMIT_SOURCE: $COMMIT_SOURCE
+# echo SHA1: $SHA1
 
