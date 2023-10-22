@@ -1,3 +1,3 @@
 const { common } = require('../common');
 
-console.log(common + 'bar');
+console.log(common + 'barbar');
