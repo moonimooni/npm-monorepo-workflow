@@ -3,10 +3,10 @@
 
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
-SHA1=$3
+SHA1=$3 # only available if it's an amend/squash commit
 
 ORIGINAL_COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
-echo "====commit-msg===="
+echo "====prepare-commit-msg===="
 echo ORIGINAL_COMMIT_MSG: $ORIGINAL_COMMIT_MSG
 echo COMMIT_SOURCE: $COMMIT_SOURCE
 echo SHA1: $SHA1
