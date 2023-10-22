@@ -1,0 +1,5 @@
+_extends: npm-monorepo-workflow:.github/release-drafter.yml
+tag-prefix: bar-v
+include-paths:
+  - 'bar/'
+  - 'common/'

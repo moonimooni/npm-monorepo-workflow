@@ -1,0 +1,18 @@
+name: Release Drafter Version Generator
+
+inputs:
+  directory:
+    required: true
+outputs:
+  version:
+    value: ${{ steps.generate-version.outputs.version }}
+runs:
+  using: 'composite'
+  steps:
+    - id: generate-version
+      run: |
+        TZ=Asia/Seoul
+        TODAY=$(date +"%y.%m.%d")
+        VERSION=${{ inputs.directory }}-v${TODAY}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+      shell: bash
